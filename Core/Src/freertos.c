@@ -47,17 +47,17 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-/* Definitions for blink01 */
-osThreadId_t blink01Handle;
-const osThreadAttr_t blink01_attributes = {
-  .name = "blink01",
+/* Definitions for blink */
+osThreadId_t blinkHandle;
+const osThreadAttr_t blink_attributes = {
+  .name = "blink",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for blink02 */
-osThreadId_t blink02Handle;
-const osThreadAttr_t blink02_attributes = {
-  .name = "blink02",
+/* Definitions for display */
+osThreadId_t displayHandle;
+const osThreadAttr_t display_attributes = {
+  .name = "display",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
@@ -67,8 +67,8 @@ const osThreadAttr_t blink02_attributes = {
 
 /* USER CODE END FunctionPrototypes */
 
-void StartBlink01(void *argument);
-void StartBlink02(void *argument);
+void StartBlink(void *argument);
+void StartDisplay(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -99,11 +99,11 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of blink01 */
-  blink01Handle = osThreadNew(StartBlink01, NULL, &blink01_attributes);
+  /* creation of blink */
+  blinkHandle = osThreadNew(StartBlink, NULL, &blink_attributes);
 
-  /* creation of blink02 */
-  blink02Handle = osThreadNew(StartBlink02, NULL, &blink02_attributes);
+  /* creation of display */
+  displayHandle = osThreadNew(StartDisplay, NULL, &display_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -115,42 +115,41 @@ void MX_FREERTOS_Init(void) {
 
 }
 
-/* USER CODE BEGIN Header_StartBlink01 */
+/* USER CODE BEGIN Header_StartBlink */
 /**
-  * @brief  Function implementing the blink01 thread.
+  * @brief  Function implementing the blink thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartBlink01 */
-void StartBlink01(void *argument)
+/* USER CODE END Header_StartBlink */
+void StartBlink(void *argument)
 {
-  /* USER CODE BEGIN StartBlink01 */
+  /* USER CODE BEGIN StartBlink */
   /* Infinite loop */
   for(;;)
   {
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    osDelay(100);
+    HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
+    osDelay(1000);
   }
-  /* USER CODE END StartBlink01 */
+  /* USER CODE END StartBlink */
 }
 
-/* USER CODE BEGIN Header_StartBlink02 */
+/* USER CODE BEGIN Header_StartDisplay */
 /**
-* @brief Function implementing the blink02 thread.
+* @brief Function implementing the display thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartBlink02 */
-void StartBlink02(void *argument)
+/* USER CODE END Header_StartDisplay */
+void StartDisplay(void *argument)
 {
-  /* USER CODE BEGIN StartBlink02 */
+  /* USER CODE BEGIN StartDisplay */
   /* Infinite loop */
   for(;;)
   {
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    osDelay(110);
+    osDelay(1);
   }
-  /* USER CODE END StartBlink02 */
+  /* USER CODE END StartDisplay */
 }
 
 /* Private application code --------------------------------------------------*/
