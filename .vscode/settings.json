@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "cstdio": "c",
+        "ssd1306.h": "c",
+        "display.h": "c"
+    }
+}

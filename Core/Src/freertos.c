@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * File Name          : freertos.c
-  * Description        : Code for freertos applications
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * File Name          : freertos.c
+ * Description        : Code for freertos applications
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2022 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -25,7 +25,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "string.h"
+#include "rtc.h"
+#include "OLEDdisplay.h"
+#include "usb_serial.h"
+#include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +62,14 @@ const osThreadAttr_t blink_attributes = {
 osThreadId_t displayHandle;
 const osThreadAttr_t display_attributes = {
   .name = "display",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for USBserial */
+osThreadId_t USBserialHandle;
+const osThreadAttr_t USBserial_attributes = {
+  .name = "USBserial",
+  .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 
@@ -69,7 +80,9 @@ const osThreadAttr_t display_attributes = {
 
 void StartBlink(void *argument);
 void StartDisplay(void *argument);
+void StartUSBserial(void *argument);
 
+extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -79,7 +92,6 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -105,6 +117,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of display */
   displayHandle = osThreadNew(StartDisplay, NULL, &display_attributes);
 
+  /* creation of USBserial */
+  USBserialHandle = osThreadNew(StartUSBserial, NULL, &USBserial_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -117,16 +132,18 @@ void MX_FREERTOS_Init(void) {
 
 /* USER CODE BEGIN Header_StartBlink */
 /**
-  * @brief  Function implementing the blink thread.
-  * @param  argument: Not used
-  * @retval None
-  */
+ * @brief  Function implementing the blink thread.
+ * @param  argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_StartBlink */
 void StartBlink(void *argument)
 {
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartBlink */
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
     HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
     osDelay(1000);
@@ -136,20 +153,40 @@ void StartBlink(void *argument)
 
 /* USER CODE BEGIN Header_StartDisplay */
 /**
-* @brief Function implementing the display thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the display thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_StartDisplay */
 void StartDisplay(void *argument)
 {
   /* USER CODE BEGIN StartDisplay */
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
-    osDelay(1);
+    OLED_display_time();
+    osDelay(100);
   }
   /* USER CODE END StartDisplay */
+}
+
+/* USER CODE BEGIN Header_StartUSBserial */
+/**
+ * @brief Function implementing the USBserial thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_StartUSBserial */
+void StartUSBserial(void *argument)
+{
+  /* USER CODE BEGIN StartUSBserial */
+  /* Infinite loop */
+  for (;;)
+  {
+    usb_serial_update();
+    osDelay(1000);
+  }
+  /* USER CODE END StartUSBserial */
 }
 
 /* Private application code --------------------------------------------------*/

@@ -1,6 +1,7 @@
 # breast-elastography-robot
 
 Hardware:
+
 - STM32F103C8T6 board (Bluepill)
 - ST-Link V2
 - OLED Display SSD1306, width 128, height 32
@@ -12,6 +13,19 @@ Connection:
                         SCL -> B10
                         SDA -> B11
                         I
+- Serial Port: On board USB port
+
+## To do
+
+- Add VBAT for time keeping
+- Reduce FLASH memory usage
+- Add stepper motor control
+- Add limit switch interrupt
+
+## Fixed Issue
+
+- On board LED not working after RTC enabled: Need to disable RTC output
+- FreeRTOS osDelay cause Hard Fault: increase task stack size
 
 ## References
 
