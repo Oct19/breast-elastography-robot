@@ -15,8 +15,8 @@
  *
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DISPLAY_H__
-#define __DISPLAY_H__
+#ifndef __OLEDDISPLAY_H__
+#define __OLEDDISPLAY_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,11 +25,11 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-void OLED_display_time(void);
 void OLED_display_welcome(void);
+void OLED_display_off(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __DISPLAY_H__ */
+#endif /* __OLEDDISPLAY_H__ */

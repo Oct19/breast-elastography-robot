@@ -26,10 +26,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "string.h"
-#include "rtc.h"
 #include "OLEDdisplay.h"
 #include "usb_serial.h"
 #include "usbd_cdc_if.h"
+#include "stepper.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,15 +62,27 @@ const osThreadAttr_t blink_attributes = {
 osThreadId_t displayHandle;
 const osThreadAttr_t display_attributes = {
   .name = "display",
-  .stack_size = 256 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for USBserial */
 osThreadId_t USBserialHandle;
 const osThreadAttr_t USBserial_attributes = {
   .name = "USBserial",
-  .stack_size = 256 * 4,
+  .stack_size = 220 * 4,
   .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for testTask */
+osThreadId_t testTaskHandle;
+const osThreadAttr_t testTask_attributes = {
+  .name = "testTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for onceTimer */
+osTimerId_t onceTimerHandle;
+const osTimerAttr_t onceTimer_attributes = {
+  .name = "onceTimer"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -81,6 +93,8 @@ const osThreadAttr_t USBserial_attributes = {
 void StartBlink(void *argument);
 void StartDisplay(void *argument);
 void StartUSBserial(void *argument);
+void StartTestTask(void *argument);
+void Callback01(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -102,6 +116,10 @@ void MX_FREERTOS_Init(void) {
   /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
 
+  /* Create the timer(s) */
+  /* creation of onceTimer */
+  onceTimerHandle = osTimerNew(Callback01, osTimerOnce, NULL, &onceTimer_attributes);
+
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
@@ -119,6 +137,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of USBserial */
   USBserialHandle = osThreadNew(StartUSBserial, NULL, &USBserial_attributes);
+
+  /* creation of testTask */
+  testTaskHandle = osThreadNew(StartTestTask, NULL, &testTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -145,7 +166,7 @@ void StartBlink(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
+    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     osDelay(1000);
   }
   /* USER CODE END StartBlink */
@@ -164,7 +185,15 @@ void StartDisplay(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    OLED_display_time();
+    if (LIMIT_SWITCH_STATUS == PRESSED)
+    {
+      OLED_display_welcome();
+    }
+    else
+    {
+      OLED_display_off();
+    }
+
     osDelay(100);
   }
   /* USER CODE END StartDisplay */
@@ -187,6 +216,32 @@ void StartUSBserial(void *argument)
     osDelay(1000);
   }
   /* USER CODE END StartUSBserial */
+}
+
+/* USER CODE BEGIN Header_StartTestTask */
+/**
+ * @brief Function implementing the testTask thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_StartTestTask */
+void StartTestTask(void *argument)
+{
+  /* USER CODE BEGIN StartTestTask */
+  /* Infinite loop */
+  for (;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartTestTask */
+}
+
+/* Callback01 function */
+void Callback01(void *argument)
+{
+  /* USER CODE BEGIN Callback01 */
+
+  /* USER CODE END Callback01 */
 }
 
 /* Private application code --------------------------------------------------*/

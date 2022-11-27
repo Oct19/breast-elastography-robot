@@ -15,17 +15,44 @@ Connection:
                         I
 - Serial Port: On board USB port
 
+## Bug
+
+### General
+
+- If migrate private include from FreeRTOS.c to main.h, USBD_CDC_ItfTypeDef is not defined
+
 ## To do
 
-- Add VBAT for time keeping
-- Reduce FLASH memory usage
-- Add stepper motor control
-- Add limit switch interrupt
+### Stepper
+
+- Implement code from PiPlot
+
+### OLED
+
+- OLED need not be real time, 5Hz refresh rate is sufficient
+- OLED should display warning, notification, send and receive message from USB serial port, and current state (decending priorities)
+
+        If OLEDMessage.warning != NULL
+        Display warning message
+        OLEDMessage.warning = NULL
+        osDelay(1000)
+
+- Notification such as hit limit switch, black background last for 1s
+- Serial message might be too frequent to display all. When this happens, display
+
+        Rx: 12 messages
+        Tx: 4 messages
+
+- When no Rx Tx for 2 seconds, display current state of the machine, 10Hz refresh rate
+
+        State: Zeroing
+        Z: 12, Angle: 120
 
 ## Fixed Issue
 
 - On board LED not working after RTC enabled: Need to disable RTC output
 - FreeRTOS osDelay cause Hard Fault: increase task stack size
+- OLED interrupt display conflict with display task, result in broken display. Change to constant refresh rate without interrupt(interrupt message does not show at once, but on the next screen refresh)
 
 ## References
 

@@ -18,7 +18,6 @@ extern "C" {
 
 #include "main.h"
 
-#define USB_Serial_Timestamp        1       // yyyy-mm-dd hh:mm:ss
 #define USB_Serial_Echo             1       // Repeat last received message
 
 /**

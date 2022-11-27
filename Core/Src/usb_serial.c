@@ -14,7 +14,6 @@
 
 #include "usb_device.h"
 #include "usbd_cdc_if.h"
-#include "rtc.h"
 
 char USB_Receive_Buf[64];
 
@@ -23,14 +22,6 @@ void usb_serial_update(void)
 
     char USB_Transmit_Buf[128];
     memset(USB_Transmit_Buf, 0, sizeof(USB_Transmit_Buf)); // clear previous message
-
-    if (USB_Serial_Timestamp)
-    {
-        char timestamp[30];
-        RTC_datetime(timestamp);
-        strcpy(USB_Transmit_Buf, timestamp);
-        strcat(USB_Transmit_Buf, " ");
-    }
 
     char *message = "Hello";
     strcat(USB_Transmit_Buf, message);

@@ -18,34 +18,21 @@
 /* Includes ---------------------------------------------------------------- */
 #include "OLEDdisplay.h"
 
-#include "rtc.h"
 #include "string.h"
 #include "stdio.h"
 #include "ssd1306.h"
-
-void OLED_display_time(void)
-{
-    char timestamp[30];
-    RTC_datetime(timestamp);
-
-    char date[10], time[10];
-    memcpy(date,timestamp,10*sizeof(char));
-    memcpy(time,&timestamp[10],10*sizeof(char));
-
-    ssd1306_Fill(Black);
-    ssd1306_SetCursor(0, 0);
-    char retVal;
-    retVal = ssd1306_WriteString(date, Font_7x10, White);
-    ssd1306_SetCursor(0, 10);
-    retVal = ssd1306_WriteString(time, Font_7x10, White);
-
-    ssd1306_UpdateScreen();
-}
 
 void OLED_display_welcome(void)
 {
     ssd1306_SetCursor(20, 5);
     ssd1306_Fill(White);
     ssd1306_WriteString("Welcome!", Font_11x18, Black);
+    ssd1306_UpdateScreen();
+}
+
+void OLED_display_off(void)
+{
+    ssd1306_SetCursor(20, 5);
+    ssd1306_Fill(Black);
     ssd1306_UpdateScreen();
 }
