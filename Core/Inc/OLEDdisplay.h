@@ -25,8 +25,27 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
+/**
+ * @brief Content and priosity for OLED display
+ * @todo Seperate Positions into Z and angle
+ */
+typedef struct _OLED_HandleTypeDef{
+    char    *Warning;           // priority 3
+    char    *Notification;      // priority 2
+    char    *Tx;                // priority 1
+    char    *Rx;                // priority 1
+    char    *State;             // priority 0
+    char    *Positions;         // priority 0
+    int     priority_old;
+    int     priority;
+} OLED_HandleTypeDef;
+
+extern OLED_HandleTypeDef OLED;
+
+void OLED_get_priority(void);
 void OLED_display_welcome(void);
 void OLED_display_off(void);
+void OLED_display_message(void);
 
 #ifdef __cplusplus
 }

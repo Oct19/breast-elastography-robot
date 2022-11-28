@@ -23,36 +23,29 @@ Connection:
 
 ## To do
 
+### State
+
+- Add state: Idle, Moving, Zeroing, Error
+
 ### Stepper
 
 - Implement code from PiPlot
 
+### Serial Port
+
+- Update serial task
+
 ### OLED
 
-- OLED need not be real time, 5Hz refresh rate is sufficient
-- OLED should display warning, notification, send and receive message from USB serial port, and current state (decending priorities)
-
-        If OLEDMessage.warning != NULL
-        Display warning message
-        OLEDMessage.warning = NULL
-        osDelay(1000)
-
-- Notification such as hit limit switch, black background last for 1s
-- Serial message might be too frequent to display all. When this happens, display
-
-        Rx: 12 messages
-        Tx: 4 messages
-
-- When no Rx Tx for 2 seconds, display current state of the machine, 10Hz refresh rate
-
-        State: Zeroing
-        Z: 12, Angle: 120
+- Update OLED_HandleTypeDef
 
 ## Fixed Issue
 
 - On board LED not working after RTC enabled: Need to disable RTC output
 - FreeRTOS osDelay cause Hard Fault: increase task stack size
-- OLED interrupt display conflict with display task, result in broken display. Change to constant refresh rate without interrupt(interrupt message does not show at once, but on the next screen refresh)
+- OLED interrupt display conflict with display task, result in broken display. Change to constant refresh rate without interrupt(interrupt message does not show at once, but on the next screen refresh
+- RTC increase flash size by a lot, removed since calender feature is not necessary
+- Sometimes PlatformIO need to build twice to build successfully, or after Clean All
 
 ## References
 

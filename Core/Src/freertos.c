@@ -77,7 +77,7 @@ osThreadId_t testTaskHandle;
 const osThreadAttr_t testTask_attributes = {
   .name = "testTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for onceTimer */
 osTimerId_t onceTimerHandle;
@@ -185,15 +185,13 @@ void StartDisplay(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    if (LIMIT_SWITCH_STATUS == PRESSED)
+    
+    OLED_get_priority();
+    if (OLED.priority >= OLED.priority_old)
     {
-      OLED_display_welcome();
+      OLED_display_message();
+      osTimerStart(onceTimerHandle, 1000);
     }
-    else
-    {
-      OLED_display_off();
-    }
-
     osDelay(100);
   }
   /* USER CODE END StartDisplay */
@@ -231,7 +229,7 @@ void StartTestTask(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    osDelay(1);
+    osDelay(200);
   }
   /* USER CODE END StartTestTask */
 }
@@ -240,7 +238,7 @@ void StartTestTask(void *argument)
 void Callback01(void *argument)
 {
   /* USER CODE BEGIN Callback01 */
-
+  OLED.priority_old = 0;
   /* USER CODE END Callback01 */
 }
 
