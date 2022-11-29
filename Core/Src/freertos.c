@@ -54,36 +54,35 @@
 /* Definitions for blink */
 osThreadId_t blinkHandle;
 const osThreadAttr_t blink_attributes = {
-  .name = "blink",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+    .name = "blink",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityNormal,
 };
 /* Definitions for display */
 osThreadId_t displayHandle;
 const osThreadAttr_t display_attributes = {
-  .name = "display",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+    .name = "display",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityLow,
 };
 /* Definitions for USBserial */
 osThreadId_t USBserialHandle;
 const osThreadAttr_t USBserial_attributes = {
-  .name = "USBserial",
-  .stack_size = 220 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+    .name = "USBserial",
+    .stack_size = 220 * 4,
+    .priority = (osPriority_t)osPriorityLow,
 };
 /* Definitions for testTask */
 osThreadId_t testTaskHandle;
 const osThreadAttr_t testTask_attributes = {
-  .name = "testTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
+    .name = "testTask",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh,
 };
 /* Definitions for onceTimer */
 osTimerId_t onceTimerHandle;
 const osTimerAttr_t onceTimer_attributes = {
-  .name = "onceTimer"
-};
+    .name = "onceTimer"};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -100,11 +99,12 @@ extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
-void MX_FREERTOS_Init(void) {
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
+void MX_FREERTOS_Init(void)
+{
   /* USER CODE BEGIN Init */
   /* USER CODE END Init */
 
@@ -148,7 +148,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
-
 }
 
 /* USER CODE BEGIN Header_StartBlink */
@@ -166,8 +165,8 @@ void StartBlink(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    osDelay(1000);
+    // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    osDelay(50);
   }
   /* USER CODE END StartBlink */
 }
@@ -185,11 +184,12 @@ void StartDisplay(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    
+
     OLED_get_priority();
     if (OLED.priority >= OLED.priority_old)
     {
       OLED_display_message();
+      if (OLED.priority >= OLED.priority_old)
       osTimerStart(onceTimerHandle, 1000);
     }
     osDelay(100);
@@ -210,8 +210,8 @@ void StartUSBserial(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    usb_serial_update();
-    osDelay(1000);
+    USB_Transmit_Hello();
+    osDelay(40);
   }
   /* USER CODE END StartUSBserial */
 }
@@ -246,4 +246,3 @@ void Callback01(void *argument)
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-

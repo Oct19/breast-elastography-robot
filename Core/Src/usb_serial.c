@@ -14,24 +14,47 @@
 
 #include "usb_device.h"
 #include "usbd_cdc_if.h"
+#include "OLEDdisplay.h"
 
 char USB_Receive_Buf[64];
-char USB_Transmit_Buf[128];
+char USB_Transmit_Buf[64];
 
-void usb_serial_update(void)
+void USB_Transmit_Hello(void)
 {
-
     memset(USB_Transmit_Buf, 0, sizeof(USB_Transmit_Buf)); // clear previous message
 
-    char *message = "Hello";
-    strcat(USB_Transmit_Buf, message);
-
-    if (USB_Serial_Echo && strlen((char *)USB_Receive_Buf) != 0)
+    // Print Hello message for 10 seconds
+    int t = HAL_GetTick();
+    char message[10];
+    if (t < 10000)
     {
-        strcat(USB_Transmit_Buf, " ");
-        strcat(USB_Transmit_Buf, USB_Receive_Buf);
+        sprintf(message, "Hi %d\n\r", t);
+    }
+    else
+    {
+        memset(message, '\0', sizeof(message));
     }
 
-    strcat(USB_Transmit_Buf, "\n\r");
+    memcpy(USB_Transmit_Buf, message, strlen(message));
     CDC_Transmit_FS((uint8_t *)USB_Transmit_Buf, strlen(USB_Transmit_Buf));
+
+    // Update OLED message
+    memset(OLED.Tx, '\0', sizeof(OLED.Tx));
+    memcpy(OLED.Tx, USB_Transmit_Buf, strlen((char *)USB_Transmit_Buf));
+}
+
+/**
+ * @brief Actions after receiving USB serial message
+ *
+ */
+void USB_Receive(uint8_t *Buf, uint32_t *Len)
+{
+    // Update OLED message
+    memset(OLED.Rx, '\0', sizeof(OLED.Rx));
+    memcpy(OLED.Rx, Buf, strlen((char *)Buf));
+
+    if (USB_Serial_Echo)
+    {
+        CDC_Transmit_FS(Buf, (uint8_t)*Len);
+    }
 }

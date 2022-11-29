@@ -30,13 +30,15 @@ extern char USB_Receive_Buf[64];
  * @brief Stroing message to be transmited through USB serial port
  * 
  */
-extern char USB_Transmit_Buf[128];
+extern char USB_Transmit_Buf[64];
 
 /**
  * @brief Combine message, and transmit through USB serial port
  * 
  */
-void usb_serial_update(void);
+void USB_Transmit_Hello(void);
+void USB_Transmit(void);
+void USB_Receive(uint8_t* Buf, uint32_t *Len);
 
 #ifdef __cplusplus
 }

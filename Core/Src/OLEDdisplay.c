@@ -51,7 +51,7 @@ void OLED_display_off(void)
 
 /**
  * @brief Collect messages, and then determine priority
- * 
+ *
  * Message          Pritority
  * Warning              3
  * Notification         2
@@ -62,21 +62,23 @@ void OLED_display_off(void)
  */
 void OLED_get_priority(void)
 {
-    // OLED.State = "Idle";
-    // OLED.Positions = "Z: 0.2mm A:120";
+    OLED.State = "Idle";
+    OLED.Positions = "Z: 0.2mm A:120";
 
-    OLED.Tx = USB_Transmit_Buf;
-    OLED.Rx = USB_Receive_Buf;
+    if (OLED.Rx)
+    {
+        OLED.Positions = "123";
+    }
 
-    if (strlen(OLED.Warning) != 0)
+    if (OLED.Warning != NULL)
     {
         OLED.priority = 3;
     }
-    else if (strlen(OLED.Notification) != 0)
+    else if (OLED.Notification != NULL)
     {
         OLED.priority = 2;
     }
-    else if ((strlen(OLED.Tx) != 0) || (strlen(OLED.Rx) != 0))
+    else if (strlen((char *)OLED.Rx) + strlen((char *)OLED.Tx) != 0)
     {
         OLED.priority = 1;
     }
@@ -87,39 +89,45 @@ void OLED_get_priority(void)
 }
 
 /**
- * @brief  Display message based on priority level, 
+ * @brief  Display message based on priority level,
  * clear all message buffer, update priotiry_old,
  * @todo Better way to clear message buffer
  *
  */
 void OLED_display_message(void)
 {
+
     switch (OLED.priority)
     {
     case 3:; // Warning
         ssd1306_Fill(White);
         ssd1306_SetCursor(20, 10);
         ssd1306_WriteString(OLED.Warning, Font_11x18, Black);
+        OLED.Warning = NULL;
         break;
     case 2:; // Notification
         ssd1306_Fill(Black);
         ssd1306_SetCursor(20, 10);
         ssd1306_WriteString(OLED.Notification, Font_11x18, White);
+        OLED.Notification = NULL;
         break;
     case 1:; // Tx Rx
         ssd1306_Fill(Black);
         // First row: Tx
         char Txbuf[20];
         strcpy(Txbuf, "Tx: ");
-        strcat(Txbuf, OLED.Tx);
+        // strcat(Txbuf, OLED.Tx);
+        strcat(Txbuf, (char *)OLED.Tx);
         ssd1306_SetCursor(20, 0);
         ssd1306_WriteString(Txbuf, Font_7x10, White);
+        memset(OLED.Tx, '\0', sizeof(OLED.Tx));
         // Second row: Rx
         char Rxbuf[20];
         strcpy(Rxbuf, "Rx: ");
-        strcat(Rxbuf, OLED.Rx);
+        strcat(Rxbuf, (char *)OLED.Rx);
         ssd1306_SetCursor(20, 20);
         ssd1306_WriteString(Rxbuf, Font_7x10, White);
+        memset(OLED.Rx, '\0', sizeof(OLED.Rx));
         break;
     case 0:; // State Positions
         ssd1306_Fill(Black);
@@ -129,17 +137,13 @@ void OLED_display_message(void)
         // Second row: Positions
         ssd1306_SetCursor(0, 20);
         ssd1306_WriteString(OLED.Positions, Font_7x10, White);
+        OLED.State = NULL;
+        OLED.Positions = NULL;
         break;
     }
     ssd1306_UpdateScreen();
 
     // clear message buffer
-    OLED.Warning = "";
-    OLED.Notification = "";
-    OLED.Tx = "";
-    OLED.Rx = "";
-    OLED.State = "";
-    OLED.Positions = "";
     // Update priority_old
     OLED.priority_old = OLED.priority;
 }

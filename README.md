@@ -21,6 +21,8 @@ Connection:
 
 - If migrate private include from FreeRTOS.c to main.h, USBD_CDC_ItfTypeDef is not defined
 
+- When message too long, OLED stuck
+
 ## To do
 
 ### State
@@ -33,11 +35,17 @@ Connection:
 
 ### Serial Port
 
-- Update serial task
+- Update Tx and Rx actions
+
+### Git
+
+- Update USB related to template repo
 
 ### OLED
 
 - Update OLED_HandleTypeDef
+- Tx Rx last for how long? If one of them keep updating, the other one should also stay
+- For task display: in each loop, if limit switch interrupt happened after get_priority, the immediate display function erased notification message before passing on to the next loop. Tmeporay fix: clear message buffer at coorsponding switch case insead of clear all buffer at the end of the function. Same priority level messages still can miss
 
 ## Fixed Issue
 

@@ -32,8 +32,8 @@ extern "C" {
 typedef struct _OLED_HandleTypeDef{
     char    *Warning;           // priority 3
     char    *Notification;      // priority 2
-    char    *Tx;                // priority 1
-    char    *Rx;                // priority 1
+    uint8_t    Tx[64];                // priority 1
+    uint8_t    Rx[64];                // priority 1
     char    *State;             // priority 0
     char    *Positions;         // priority 0
     int     priority_old;
