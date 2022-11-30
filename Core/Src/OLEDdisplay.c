@@ -18,6 +18,7 @@
 /* Includes ---------------------------------------------------------------- */
 #include "OLEDdisplay.h"
 
+#include "main.h"
 #include "string.h"
 #include "stdio.h"
 #include <stdlib.h>
@@ -62,7 +63,6 @@ void OLED_display_off(void)
  */
 void OLED_get_priority(void)
 {
-    OLED.State = "Idle";
     OLED.Positions = "Z: 0.2mm A:120";
 
     if (OLED.Rx)
@@ -118,14 +118,14 @@ void OLED_display_message(void)
         strcpy(Txbuf, "Tx: ");
         // strcat(Txbuf, OLED.Tx);
         strcat(Txbuf, (char *)OLED.Tx);
-        ssd1306_SetCursor(20, 0);
+        ssd1306_SetCursor(0, 0);
         ssd1306_WriteString(Txbuf, Font_7x10, White);
         memset(OLED.Tx, '\0', sizeof(OLED.Tx));
         // Second row: Rx
         char Rxbuf[20];
-        strcpy(Rxbuf, "Rx: ");
+        strcpy(Rxbuf, "Rx:");
         strcat(Rxbuf, (char *)OLED.Rx);
-        ssd1306_SetCursor(20, 20);
+        ssd1306_SetCursor(0, 20);
         ssd1306_WriteString(Rxbuf, Font_7x10, White);
         memset(OLED.Rx, '\0', sizeof(OLED.Rx));
         break;
@@ -133,11 +133,27 @@ void OLED_display_message(void)
         ssd1306_Fill(Black);
         // First row: State
         ssd1306_SetCursor(30, 0);
-        ssd1306_WriteString(OLED.State, Font_7x10, White);
+
+        char *str = NULL;
+        switch (ROBOT_STATE)
+        {
+        case STATE_RESET:;
+            str = "RESET";
+            break;
+        case STATE_IDLE:;
+            str = "Idle";
+            break;
+        case STATE_MOVE:;
+            str = "Move";
+            break;
+        case STATE_ERROR:;
+            str = "Error";
+            break;
+        }
+        ssd1306_WriteString(str, Font_7x10, White);
         // Second row: Positions
         ssd1306_SetCursor(0, 20);
         ssd1306_WriteString(OLED.Positions, Font_7x10, White);
-        OLED.State = NULL;
         OLED.Positions = NULL;
         break;
     }

@@ -72,12 +72,12 @@ const osThreadAttr_t USBserial_attributes = {
     .stack_size = 220 * 4,
     .priority = (osPriority_t)osPriorityLow,
 };
-/* Definitions for testTask */
-osThreadId_t testTaskHandle;
-const osThreadAttr_t testTask_attributes = {
-    .name = "testTask",
+/* Definitions for Stepper */
+osThreadId_t StepperHandle;
+const osThreadAttr_t Stepper_attributes = {
+    .name = "Stepper",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityHigh,
+    .priority = (osPriority_t)osPriorityNormal,
 };
 /* Definitions for onceTimer */
 osTimerId_t onceTimerHandle;
@@ -92,7 +92,7 @@ const osTimerAttr_t onceTimer_attributes = {
 void StartBlink(void *argument);
 void StartDisplay(void *argument);
 void StartUSBserial(void *argument);
-void StartTestTask(void *argument);
+void StartStepper(void *argument);
 void Callback01(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
@@ -138,8 +138,8 @@ void MX_FREERTOS_Init(void)
   /* creation of USBserial */
   USBserialHandle = osThreadNew(StartUSBserial, NULL, &USBserial_attributes);
 
-  /* creation of testTask */
-  testTaskHandle = osThreadNew(StartTestTask, NULL, &testTask_attributes);
+  /* creation of Stepper */
+  StepperHandle = osThreadNew(StartStepper, NULL, &Stepper_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -159,8 +159,7 @@ void MX_FREERTOS_Init(void)
 /* USER CODE END Header_StartBlink */
 void StartBlink(void *argument)
 {
-  /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
+  ROBOT_STATE = STATE_IDLE;
   /* USER CODE BEGIN StartBlink */
   /* Infinite loop */
   for (;;)
@@ -184,13 +183,12 @@ void StartDisplay(void *argument)
   /* Infinite loop */
   for (;;)
   {
-
     OLED_get_priority();
     if (OLED.priority >= OLED.priority_old)
     {
       OLED_display_message();
       if (OLED.priority >= OLED.priority_old)
-      osTimerStart(onceTimerHandle, 1000);
+        osTimerStart(onceTimerHandle, 1000);
     }
     osDelay(100);
   }
@@ -211,27 +209,33 @@ void StartUSBserial(void *argument)
   for (;;)
   {
     USB_Transmit_Hello();
-    osDelay(40);
+    osDelay(500);
   }
   /* USER CODE END StartUSBserial */
 }
 
-/* USER CODE BEGIN Header_StartTestTask */
+/* USER CODE BEGIN Header_StartStepper */
 /**
- * @brief Function implementing the testTask thread.
+ * @brief Function implementing the Stepper thread.
  * @param argument: Not used
  * @retval None
  */
-/* USER CODE END Header_StartTestTask */
-void StartTestTask(void *argument)
+/* USER CODE END Header_StartStepper */
+void StartStepper(void *argument)
 {
-  /* USER CODE BEGIN StartTestTask */
+  /* USER CODE BEGIN StartStepper */
+  
+  enable_driver();
   /* Infinite loop */
   for (;;)
   {
-    osDelay(200);
+    for (int y = 0; y < 8; y = y + 1) // 8 times
+    {
+      step(100, 1, 1); // 25 steps (45 degrees) CCV
+      osDelay(500);
+    }
   }
-  /* USER CODE END StartTestTask */
+  /* USER CODE END StartStepper */
 }
 
 /* Callback01 function */

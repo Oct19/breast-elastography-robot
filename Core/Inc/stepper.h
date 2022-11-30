@@ -68,8 +68,12 @@ extern "C"
 #define PRESSED                 0
 #define LIMIT_SWITCH_STATUS     HAL_GPIO_ReadPin(LIMIT_SWITCH_GPIO_Port, LIMIT_SWITCH_Pin)
 
+// Stepper
+#define disable_driver()    HAL_GPIO_WritePin(ENA_GPIO_Port, ENA_Pin, RESET)
+#define enable_driver()     HAL_GPIO_WritePin(ENA_GPIO_Port, ENA_Pin, SET)
 
 
+void step (int steps, uint8_t direction, uint16_t delay);
 
 
 #ifdef __cplusplus

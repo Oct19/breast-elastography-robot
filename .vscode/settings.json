@@ -5,6 +5,7 @@
         "display.h": "c",
         "usb_serial.h": "c",
         "usbd_cdc_if.h": "c",
-        "oleddisplay.h": "c"
+        "oleddisplay.h": "c",
+        "main.h": "c"
     }
 }

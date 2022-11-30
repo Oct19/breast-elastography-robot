@@ -25,17 +25,14 @@ Connection:
 
 ## To do
 
-### State
-
-- Add state: Idle, Moving, Zeroing, Error
-
 ### Stepper
 
-- Implement code from PiPlot
+- Implement stepper code from PiPlot
+- Find microseconds osDelay for Pulse
 
 ### Serial Port
 
-- Update Tx and Rx actions
+- Tx is currently not interrupt but a task
 
 ### Git
 
@@ -54,6 +51,7 @@ Connection:
 - OLED interrupt display conflict with display task, result in broken display. Change to constant refresh rate without interrupt(interrupt message does not show at once, but on the next screen refresh
 - RTC increase flash size by a lot, removed since calender feature is not necessary
 - Sometimes PlatformIO need to build twice to build successfully, or after Clean All
+- sprintf takes half of the flash size, because it brings the whole math implementation for floats
 
 ## References
 

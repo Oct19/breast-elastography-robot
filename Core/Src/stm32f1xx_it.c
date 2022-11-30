@@ -169,7 +169,9 @@ void EXTI3_IRQHandler(void)
   /* USER CODE BEGIN EXTI3_IRQn 0 */
   if (__HAL_GPIO_EXTI_GET_FLAG(Z_RESET_Pin))
   {
+    
     OLED.Notification = "Z_RESET";
+    
     //HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
   }
   /* USER CODE END EXTI3_IRQn 0 */

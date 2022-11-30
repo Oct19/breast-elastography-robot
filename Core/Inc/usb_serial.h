@@ -20,11 +20,7 @@ extern "C" {
 
 #define USB_Serial_Echo             1       // Repeat last received message
 
-/**
- * @brief Storing recieved message through USB serial port
- * 
- */
-extern char USB_Receive_Buf[64];
+
 
 /**
  * @brief Stroing message to be transmited through USB serial port
