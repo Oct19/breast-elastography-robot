@@ -25,10 +25,13 @@ Connection:
 
 ## To do
 
+### G code
+
+### RoboDK
+
 ### Stepper
 
-- Implement stepper code from PiPlot
-- Find microseconds osDelay for Pulse
+- Implement stepper code from GRBL
 
 ### Serial Port
 
@@ -53,7 +56,20 @@ Connection:
 - Sometimes PlatformIO need to build twice to build successfully, or after Clean All
 - sprintf takes half of the flash size, because it brings the whole math implementation for floats
 
+## Notes
+
+### Timer
+
+- Tout = (Prescaler x Preload)/Clock Frequency
+- 0.5s = (   1000   x 36000  )/     72MHz
+- The value for prescaler and ARR should be 1 less than the actual value
+- Hence in STM32CubeMX, set prescaler to `1000-1`, and Preload to `36000-1`
+
 ## References
 
-1. STM32 project template <https://github.com/Oct19/Bluepill-CubeMX-PlatformIO-Template>
-2. STM32 Driver for OLED Display SSD1306 <https://github.com/afiskon/stm32-ssd1306>
+- STM32 project template <https://github.com/Oct19/Bluepill-CubeMX-PlatformIO-Template>
+- STM32 Driver for OLED Display SSD1306 <https://github.com/afiskon/stm32-ssd1306>
+- STM32 timer interrupt <https://controllerstech.com/pwm-in-stm32/>
+- STM32 timer <https://youtu.be/VfbW6nfG4kw>
+- Stepper motor configuration <https://github.com/brentnd/PiPlot>
+- GRBL stm32 <https://github.com/dungjk/grbl-stm32>

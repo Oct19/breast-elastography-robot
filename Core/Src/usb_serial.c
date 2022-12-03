@@ -20,7 +20,6 @@ char USB_Transmit_Buf[64];
 
 void USB_Transmit_Hello(void)
 {
-
     // Print Hello message for 10 seconds
     char message[12];
     memset(message, '\0', sizeof(message));

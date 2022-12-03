@@ -23,45 +23,44 @@
 #define __MAIN_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
 
-  /* Private includes ----------------------------------------------------------*/
-  /* USER CODE BEGIN Includes */
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 
-  /* USER CODE END Includes */
+/* USER CODE END Includes */
 
-  /* Exported types ------------------------------------------------------------*/
-  /* USER CODE BEGIN ET */
+/* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN ET */
 
   typedef enum _ROBOT_STATE_HandleTypeDef
   {
-    STATE_RESET,  // 0
-    STATE_IDLE,  // 1
-    STATE_MOVE,  // 2
-    STATE_ERROR, // 3
+    STATE_RESET, // 0 ignore Rx, homing procedure
+    STATE_IDLE,  // 1 stepper off
+    STATE_MOVE,  // 2 stepper destination != current position
+    STATE_ERROR, // 3 cant homing,
   } ROBOT_STATE_HandleTypeDef;
 
   extern ROBOT_STATE_HandleTypeDef ROBOT_STATE;
 
-  /* USER CODE END ET */
+/* USER CODE END ET */
 
-  /* Exported constants --------------------------------------------------------*/
-  /* USER CODE BEGIN EC */
+/* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
 
-  /* USER CODE END EC */
+/* USER CODE END EC */
 
-  /* Exported macro ------------------------------------------------------------*/
-  /* USER CODE BEGIN EM */
+/* Exported macro ------------------------------------------------------------*/
+/* USER CODE BEGIN EM */
 
-  /* USER CODE END EM */
+/* USER CODE END EM */
 
-  /* Exported functions prototypes ---------------------------------------------*/
-  void Error_Handler(void);
+/* Exported functions prototypes ---------------------------------------------*/
+void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
@@ -70,18 +69,24 @@ extern "C"
 /* Private defines -----------------------------------------------------------*/
 #define LED_Pin GPIO_PIN_13
 #define LED_GPIO_Port GPIOC
-#define ENA_Pin GPIO_PIN_12
-#define ENA_GPIO_Port GPIOB
-#define DIR_Pin GPIO_PIN_13
-#define DIR_GPIO_Port GPIOB
-#define PUL_Pin GPIO_PIN_14
-#define PUL_GPIO_Port GPIOB
+#define ENA0_Pin GPIO_PIN_12
+#define ENA0_GPIO_Port GPIOB
+#define DIR0_Pin GPIO_PIN_13
+#define DIR0_GPIO_Port GPIOB
+#define PUL0_Pin GPIO_PIN_14
+#define PUL0_GPIO_Port GPIOB
+#define ENA1_Pin GPIO_PIN_8
+#define ENA1_GPIO_Port GPIOA
+#define DIR1_Pin GPIO_PIN_9
+#define DIR1_GPIO_Port GPIOA
+#define PUL1_Pin GPIO_PIN_10
+#define PUL1_GPIO_Port GPIOA
 #define Z_RESET_Pin GPIO_PIN_3
 #define Z_RESET_GPIO_Port GPIOB
 #define Z_RESET_EXTI_IRQn EXTI3_IRQn
-  /* USER CODE BEGIN Private defines */
+/* USER CODE BEGIN Private defines */
 
-  /* USER CODE END Private defines */
+/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
