@@ -86,6 +86,7 @@ void Error_Handler(void);
 #define Z_RESET_EXTI_IRQn EXTI3_IRQn
 /* USER CODE BEGIN Private defines */
 
+#define pi 3.1415926
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -30,6 +30,7 @@
 #include "usb_serial.h"
 #include "usbd_cdc_if.h"
 #include "stepper.h"
+#include "stm32f1xx_hal.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -226,16 +227,19 @@ void StartUSBserial(void *argument)
 void StartStepper(void *argument)
 {
   /* USER CODE BEGIN StartStepper */
-  
-  enable_driver();
   /* Infinite loop */
   for (;;)
   {
-    for (int y = 0; y < 8; y = y + 1) // 8 times
-    {
-      step_test(100, 1, 1); // 25 steps (45 degrees) CCV
-      osDelay(500);
-    }
+    // step_simplest();
+    // step_constantSpeed(200, 1, 1);
+    // step_simpleAccel(1000);
+    // step_constantAccel();
+
+    //HAL_GPIO_WritePin(ENA0_GPIO_Port, ENA0_Pin, SET);
+    HAL_GPIO_WritePin(PUL0_GPIO_Port,PUL0_Pin, SET);
+    osDelay(1);
+    HAL_GPIO_WritePin(PUL0_GPIO_Port,PUL0_Pin, RESET);
+    osDelay(1);
   }
   /* USER CODE END StartStepper */
 }

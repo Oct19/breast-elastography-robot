@@ -8,17 +8,6 @@
  *
  * @copyright Copyright (c) 2022
  *
- * **************************************************************
- * Limit switch
- * Part number: FC-SPX307Z
- * Connection:
- * COLOR    NAME    CONNECTION
- * BROWN    5-24VDC 5V
- * BLUE     GND     GND
- * BLACK    NPN.NO  STM32:LIMIT_SWITCH
- * WHITE    NPN.NC  OPEN
- * Note:
- * For NO output, high voltage is detected
  * ****************************************************************
  * Stepper Motor
  * Part number: 28HS4401-65N2-50
@@ -51,8 +40,9 @@
  * Configure SW1-8 before use
  * Half motor current during idel state
  * Voltage high: >3.5V
- * ENA signal should be 5μs before DIR signal
- * DIR signal should be 2μs before PUL signal
+ * ENA: at least 5μs before DIR signal
+ * DIR: at least 2μs before PUL signal
+ * PUL: Both high and low signal should be longer than 2μs
  */
 #ifndef __switch_H__
 #define __switch_H__
@@ -63,53 +53,44 @@ extern "C"
 #endif
 
 #include "main.h"
+#include "stdbool.h"
 
-/* Limit switch */
-#define PRESSED 0
-#define LIMIT_SWITCH_STATUS HAL_GPIO_ReadPin(LIMIT_SWITCH_GPIO_Port, LIMIT_SWITCH_Pin)
+typedef struct
+{
+    // externally defined parameters
+    float acceleration;
+    volatile unsigned int minStepInterval; // ie. max speed, smaller is faster
+    void (*dirFunc)(int);
+    void (*stepFunc)();
 
-#define NUM_MOTORS 2
+    // derived parameters
+    unsigned int c0;   // step interval for first step, determines acceleration
+    long stepPosition; // current position of stepper (total of all movements taken so far)
 
-#define disable_driver() HAL_GPIO_WritePin(ENA0_GPIO_Port, ENA0_Pin, RESET)
-#define enable_driver() HAL_GPIO_WritePin(ENA0_GPIO_Port, ENA0_Pin, SET)
+    // per movement variables (only changed once per movement)
+    volatile int dir;                      // current direction of movement, used to keep track of position
+    volatile unsigned int totalSteps;      // number of steps requested for current movement
+    volatile bool movementDone;            // true if the current movement has been completed (used by main program to wait for completion)
+    volatile unsigned int rampUpStepCount; // number of steps taken to reach either max speed, or half-way to the goal (will be zero until this number is known)
 
-    /* Settings structure for stepper */
-    typedef struct
-    {
-        uint16_t ENA_PIN;
-        uint16_t DIR_PIN;
-        uint16_t PUL_PIN;
-        GPIO_TypeDef *ENA_PORT;
-        GPIO_TypeDef *DIR_PORT;
-        GPIO_TypeDef *PUL_PORT;
-    } StepperSettings;
+    // per iteration variables (potentially changed every interrupt)
+    volatile unsigned int n;         // index in acceleration curve, used to calculate next interval
+    volatile float d;                // current interval length
+    volatile unsigned long di;       // above variable truncated
+    volatile unsigned int stepCount; // number of steps completed in current movement
+} stepperInfo;
 
-    /* Status structure for stepper */
-    typedef struct
-    {
-        uint8_t enabled;
-        uint8_t spinning;
-        uint8_t speed;
-        uint32_t desired_position;
-        uint32_t current_position;
-    } StepperStatus;
+#define NUM_STEPPERS 2
+volatile stepperInfo steppers[NUM_STEPPERS];
 
-    /* Stepper motor structure which has settings and status */
-    typedef struct
-    {
-        StepperSettings settings;
-        StepperStatus status;
-    } StepperMotor;
+void step_simplest(void);
+void step_constantSpeed(int steps, uint8_t direction, uint8_t delay);
+void step_simpleAccel(int steps);
+void step_constantAccel();
 
-    /* Stepper motor objects */
-    StepperMotor Motor[NUM_MOTORS];
-
-    /* Pointers to the steppers */
-    StepperMotor *p_Motor0; // Rotation motor
-    StepperMotor *p_Motor1; // Translation motor 1
-    StepperMotor *p_Motor2; // Translation motor 2
-
-    void step_test(int steps, uint8_t direction, uint16_t delay);
+void resetStepperInfo(stepperInfo si);
+void resetStepper(volatile stepperInfo si);
+void step_ISR();
 
 #ifdef __cplusplus
 }

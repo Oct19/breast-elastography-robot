@@ -92,15 +92,9 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C2_Init();
-  MX_TIM2_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 
-  ROBOT_STATE = STATE_RESET;
-  // HAL_TIM_Base_Start_IT(&htim1);
-  HAL_TIM_Base_Start_IT(&htim2);
-  //  TIM1->CCR3 = 50;
-  //  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-  //  USB serial port
   MX_USB_DEVICE_Init();
 
   // OLED Display
@@ -187,10 +181,9 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
-  if (htim == &htim2)
+  if (htim == &htim1)
   {
-    HAL_GPIO_TogglePin(PUL1_GPIO_Port, PUL1_Pin); // TIM2 toggle PUL1
-    //HAL_IncTick();
+    step_ISR();
   }
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM4) {
