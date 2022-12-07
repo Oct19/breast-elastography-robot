@@ -1,36 +1,23 @@
 # Connection diagram
 
-                                ^            +---------+--------+
-                        +---------------+    |  OLED   |  Step  |
-                        |      USB      |    | DISPLAY |  Motor |
-                        |     SERIAL    |    |         |        |
-                        |               |    |         |        |
-                 ------>|               |    |         |        |
-                        |     STM32     |    |         |        |
-                ------->|    F103C8T6   |    | SCL SDA |        |
-                        |               |    +---------+--------+
-               -------->|               |       |   |     ^^^^
-                        |               |       |   |     ||||
-              ---------<|           PB10|<------+   |     ||||
-                        |               |           |     ||||
-        _________       |               |           |     ||||
-                 ------<|           PB11|<----------+     ||||
-                        |  PB  PB  PB   |                 ||||
-                        |  12  13  14   |                 ||||
-                        +---------------+                 ||||
-                           |   |   |                      ||||
-                           |   |   |                      ||||
-                           V   V   V                      ||||
-                        +---------------+                 ||||
-                        | -EN -DIR -PUL |                 ||||
-                        |               |                 ||||
-                        |  Standard    A|-----red---------+|||
-                        |              _|                  ||| 
-                        |  Stepmotor   A|-----blue---------+||
-                        |               |                   ||  
-                        |  controller  B|-----green---------+|
-                        |              _|                    |
-                        |  e.g. TB6600 B|-----black----------+
-                        |               |
-                        |               |
-                        +---------------+                   
+## Pins and Wiring
+
+Beside the usual `VCC` and`GND` pins, the following pins are used:
+
+- STM USB PORT - COMPUTER USB PORT
+
+- STM PB10 (`I2C2_SCL`) - OLED SCL
+- STM PB11 (`I2C2 SDA`) - OLED SDA
+- STM PB3  (`Z_RESET`) - LIMIT SWITCH Z NO
+- STM PB4  (`A_RESET`) - LIMIT SWITCH A NO
+- STM PB12 (`ENA`) - STEP DRIVER ENA-
+- STM PB13 (`DIR0`) - STEP DRIVER 0 DIR-
+- STM PB14 (`PUL0`) - STEP DRIVER 0 PUL-
+
+- STEP DRIVER ENA+ - 5V
+- STEP DRIVER DIR+ - 5V
+- STEP DRIVER PUL+ - 5V
+- STEP DRIVER A+ - MOTOR RED
+- STEP DRIVER A- - MOTOR BLUE
+- STEP DRIVER B+ - MOTOR BLACK
+- STEP DRIVER B- - MOTOR BLUE

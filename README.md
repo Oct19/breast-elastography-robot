@@ -14,12 +14,12 @@ Hardware:
 
 ## TODO
 
-- Update connection diagram, system block diagram
+- System block diagram
 - Implement stepper code from iforce2d
-- Tx is currently not interrupt but a task
+- Serial Tx is currently not interrupt but a task
 - Update USB related to template repo
 - Update OLED_HandleTypeDef
-- Tx Rx last for how long? If one of them keep updating, the other one should also stay
+- OLED: Tx Rx last for how long? If one of them keep updating, the other one should also stay
 - For task display: in each loop, if limit switch interrupt happened after get_priority, the immediate display function erased notification message before passing on to the next loop. Tmeporay fix: clear message buffer at coorsponding switch case insead of clear all buffer at the end of the function. Same priority level messages still can miss
 
 ## Future features

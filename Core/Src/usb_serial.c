@@ -9,12 +9,8 @@
  * @copyright Copyright (c) 2022
  *
  */
-
-#include "usb_serial.h"
-
-#include "usb_device.h"
+#include "main.h"
 #include "usbd_cdc_if.h"
-#include "OLEDdisplay.h"
 
 char USB_Transmit_Buf[64];
 

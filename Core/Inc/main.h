@@ -31,6 +31,22 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "math.h"
+#include "string.h"
+#include "stdlib.h"
+#include "stdbool.h"
+#include "stdint.h"
+#include "nuts_bolts.h"
+
+#include "gpio.h"
+#include "usbd_conf.h"
+#include "stepper.h"
+#include "usb_serial.h"
+#include "OLEDdisplay.h"
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "cmsis_os.h"
 
 /* USER CODE END Includes */
 
@@ -69,21 +85,21 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LED_Pin GPIO_PIN_13
 #define LED_GPIO_Port GPIOC
-#define ENA0_Pin GPIO_PIN_12
-#define ENA0_GPIO_Port GPIOB
-#define DIR0_Pin GPIO_PIN_13
-#define DIR0_GPIO_Port GPIOB
-#define PUL0_Pin GPIO_PIN_14
-#define PUL0_GPIO_Port GPIOB
-#define ENA1_Pin GPIO_PIN_8
-#define ENA1_GPIO_Port GPIOA
-#define DIR1_Pin GPIO_PIN_9
-#define DIR1_GPIO_Port GPIOA
-#define PUL1_Pin GPIO_PIN_10
-#define PUL1_GPIO_Port GPIOA
+#define ENA_Pin GPIO_PIN_12
+#define ENA_GPIO_Port GPIOB
+#define DIR1_Pin GPIO_PIN_13
+#define DIR1_GPIO_Port GPIOB
+#define PUL1_Pin GPIO_PIN_14
+#define PUL1_GPIO_Port GPIOB
+#define DIR2_Pin GPIO_PIN_9
+#define DIR2_GPIO_Port GPIOA
+#define PUL2_Pin GPIO_PIN_10
+#define PUL2_GPIO_Port GPIOA
 #define Z_RESET_Pin GPIO_PIN_3
 #define Z_RESET_GPIO_Port GPIOB
 #define Z_RESET_EXTI_IRQn EXTI3_IRQn
+#define A_RESET_Pin GPIO_PIN_4
+#define A_RESET_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 #define pi 3.1415926

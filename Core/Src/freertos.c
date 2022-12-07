@@ -25,12 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "string.h"
-#include "OLEDdisplay.h"
-#include "usb_serial.h"
-#include "usbd_cdc_if.h"
-#include "stepper.h"
-#include "stm32f1xx_hal.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -227,19 +222,15 @@ void StartUSBserial(void *argument)
 void StartStepper(void *argument)
 {
   /* USER CODE BEGIN StartStepper */
+  HAL_GPIO_WritePin(ENA_GPIO_Port, ENA_Pin, SET);
   /* Infinite loop */
   for (;;)
   {
     // step_simplest();
     // step_constantSpeed(200, 1, 1);
-    // step_simpleAccel(1000);
+    step_simpleAccel(1000);
     // step_constantAccel();
 
-    //HAL_GPIO_WritePin(ENA0_GPIO_Port, ENA0_Pin, SET);
-    HAL_GPIO_WritePin(PUL0_GPIO_Port,PUL0_Pin, SET);
-    osDelay(1);
-    HAL_GPIO_WritePin(PUL0_GPIO_Port,PUL0_Pin, RESET);
-    osDelay(1);
   }
   /* USER CODE END StartStepper */
 }

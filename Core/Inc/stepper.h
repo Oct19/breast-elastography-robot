@@ -11,33 +11,12 @@
  * ****************************************************************
  * Stepper Motor
  * Part number: 28HS4401-65N2-50
- * Connection:
- * COLOR    NAME    CONNECTION
- * BLACK    A+      A+
- * GREEN    A-      A-
- * RED      B+      B+
- * BLUE     B-      B-
- * Note:
  * Current rating: 0.7A/phase
  * Step angle: 1.8 degrees
  * Lead screw increment: 0.01mm/step
  * **************************************************************
  * Stepper Motor Driver
  * Part number: UM242 (TB6600 family)
- * Connection:
- * NAME     CONNECTION      NOTE
- * V+,V-    24VDC POWER     8-36VDC
- * A+-      MOTOR           POLARITY MATTERS
- * B+-      MOTOR           POLARITY MATTERS
- * PUL-     STM32:PUL       PULSE, STEP INPUT
- * DIR-     STM32:DIR       DIRECTION INPUT
- * ENA-     STM32:ENA       ENABLE
- * PUL+     5V
- * DIR+     5V
- * ENA+     5V
- * Note:
- * Connection of ENA+- is optional
- * Configure SW1-8 before use
  * Half motor current during idel state
  * Voltage high: >3.5V
  * ENA: at least 5μs before DIR signal
@@ -54,6 +33,10 @@ extern "C"
 
 #include "main.h"
 #include "stdbool.h"
+
+#define ENABLE_MOTORS       HAL_GPIO_WritePin(ENA_GPIO_Port, ENA_Pin, SET);
+#define DISABLE_MOTORS      HAL_GPIO_WritePin(ENA_GPIO_Port, ENA_Pin, RESET);
+
 
 typedef struct
 {
@@ -81,7 +64,9 @@ typedef struct
 } stepperInfo;
 
 #define NUM_STEPPERS 2
-volatile stepperInfo steppers[NUM_STEPPERS];
+extern volatile stepperInfo steppers[NUM_STEPPERS];
+extern volatile uint8_t remainingSteppersFlag;
+extern volatile uint8_t nextStepperFlag;
 
 void step_simplest(void);
 void step_constantSpeed(int steps, uint8_t direction, uint8_t delay);

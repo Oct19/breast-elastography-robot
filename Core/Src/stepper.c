@@ -10,15 +10,7 @@
  *
  */
 
-#include "stepper.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
 #include "main.h"
-#include "cmsis_os.h"
-#include "math.h"
-
-#define HOME_POS (uint32_t)(1)
 
 /****************************************************************
  * Functions below are simple, using osDelay
@@ -30,7 +22,8 @@
  */
 void step_simplest(void)
 {
-  HAL_GPIO_TogglePin(PUL0_GPIO_Port, PUL0_Pin);
+  ENABLE_MOTORS;
+  HAL_GPIO_TogglePin( PUL1_GPIO_Port,  PUL1_Pin);
   osDelay(1);
 }
 
@@ -43,12 +36,13 @@ void step_simplest(void)
  */
 void step_constantSpeed(int steps, uint8_t direction, uint8_t delay)
 {
-  HAL_GPIO_WritePin(DIR0_GPIO_Port, DIR0_Pin, direction);
+  ENABLE_MOTORS;
+  HAL_GPIO_WritePin(DIR1_GPIO_Port, DIR1_Pin, direction);
   for (int i = 0; i < steps; i++)
   {
-    HAL_GPIO_WritePin(PUL0_GPIO_Port, PUL0_Pin, SET);
+    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, SET);
     osDelay(delay);
-    HAL_GPIO_WritePin(PUL0_GPIO_Port, PUL0_Pin, RESET);
+    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, RESET);
     osDelay(delay);
   }
   osDelay(1000);
@@ -72,11 +66,13 @@ void step_simpleAccel(int steps)
   int rampDownStart = steps - rampUpStop;
 
   int delay = lowSpeed;
+
+  ENABLE_MOTORS;
   for (int i = 0; i < steps; i++)
   {
-    HAL_GPIO_WritePin(PUL0_GPIO_Port, PUL0_Pin, SET);
+    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, SET);
     osDelay(delay);
-    HAL_GPIO_WritePin(PUL0_GPIO_Port, PUL0_Pin, RESET);
+    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, RESET);
     osDelay(delay);
 
     if (i < rampUpStop)
@@ -124,20 +120,22 @@ void step_constantAccel()
     delays[i] = d;
     lastDelay = d;
   }
+
+  ENABLE_MOTORS;
   /* Acceleration */
   for (int i = 0; i < steps; i++)
   {
-    HAL_GPIO_WritePin(PUL0_GPIO_Port, PUL0_Pin, RESET);
+    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, RESET);
     osDelay(delays[i]);
-    HAL_GPIO_WritePin(PUL0_GPIO_Port, PUL0_Pin, SET);
+    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, SET);
     osDelay(delays[i]);
   }
   /* Deceleration */
   for (int i = 0; i < steps; i++)
   {
-    HAL_GPIO_WritePin(PUL0_GPIO_Port, PUL0_Pin, RESET);
+    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, RESET);
     osDelay(delays[steps - i - 1]);
-    HAL_GPIO_WritePin(PUL0_GPIO_Port, PUL0_Pin, SET);
+    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, SET);
     osDelay(delays[steps - i - 1]);
   }
   osDelay(1000);
@@ -156,7 +154,8 @@ void step_constantAccel()
  * Counter period: handled by function below
  * ****************************************************************
  */
-
+volatile uint8_t remainingSteppersFlag = 0;
+volatile uint8_t nextStepperFlag = 0;
 /**
  * @brief Inside HAL_TIM_PeriodElapsedCallback
  *
@@ -189,82 +188,48 @@ void resetStepper(volatile stepperInfo si)
   si.rampUpStepCount = 0;
   si.movementDone = false;
 }
-// void StepperInit()
-// {
-//   int i;
 
-//   p_Motor0 = &Motor[0];
-//   p_Motor1 = &Motor[1];
+void prepareMovement(int whichMotor, int steps) {
+  volatile stepperInfo si = steppers[whichMotor];
+  si.dirFunc( steps < 0 ? 1 : 0 );
+  si.dir = steps > 0 ? 1 : -1;
+  si.totalSteps = abs(steps);
+  resetStepper(si);
+  remainingSteppersFlag |= (1 << whichMotor);
+}
 
-//   StepperSetSettings();
+void setNextInterruptInterval() 
+{
+  bool movementComplete = true;
 
-//   // Enable Clocks to all ports
-//   SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK;
+  unsigned int mind = 999999;
+  for (int i = 0; i < NUM_STEPPERS; i++) {
+    if ( ((1 << i) & remainingSteppersFlag) && steppers[i].di < mind ) {
+      mind = steppers[i].di;
+    }
+  }
 
-//   // Setup GPIO ports as outputs with drive strength enabled
-//   GPIO_PDDR_REG(p_Motor0->settings.Pt) = 0;
-//   GPIO_PDDR_REG(p_Motor1->settings.Pt) = 0;
-//   for (i = 0; i < NUM_PINS; i++)
-//   {
-//     PORTE_PCR1 = 0;
-//     // Motor 1
-//     GPIO_PDDR_REG(p_Motor0->settings.Pt) |= (1 << p_Motor0->settings.Pin[i]);
-//     PORT_PCR_REG(p_Motor0->settings.Port, p_Motor0->settings.Pin[i]) = PORT_PCR_MUX(1) | PORT_PCR_DSE_MASK;
-//     // Motor 2
-//     GPIO_PDDR_REG(p_Motor1->settings.Pt) |= (1 << p_Motor1->settings.Pin[i]);
-//     PORT_PCR_REG(p_Motor1->settings.Port, p_Motor1->settings.Pin[i]) = PORT_PCR_MUX(1) | PORT_PCR_DSE_MASK;
-//   }
-// }
+  nextStepperFlag = 0;
+  for (int i = 0; i < NUM_STEPPERS; i++) {
+    if ( ! steppers[i].movementDone )
+      movementComplete = false;
 
-// void StepperSetSettings()
-// {
-//   /* Reset both motor statuses */
-//   StepperReset(p_Motor0);
-//   StepperReset(p_Motor1);
+    if ( ((1 << i) & remainingSteppersFlag) && steppers[i].di == mind )
+      nextStepperFlag |= (1 << i);
+  }
 
-//   /* Assign motor controller Port and Pin */
-//   p_Motor0->settings.ENA_PORT = ENA0_GPIO_Port;
-//   p_Motor0->settings.ENA_PIN = ENA0_Pin;
-//   p_Motor0->settings.DIR_PORT = DIR0_GPIO_Port;
-//   p_Motor0->settings.DIR_PIN = DIR0_Pin;
-//   p_Motor0->settings.PUL_PORT = PUL0_GPIO_Port;
-//   p_Motor0->settings.PUL_PIN = PUL0_Pin;
+  if ( remainingSteppersFlag == 0 ) {
+    //OCR1A = 65500;
+  }
 
-//   p_Motor1->settings.ENA_PORT = ENA1_GPIO_Port;
-//   p_Motor1->settings.ENA_PIN = ENA1_Pin;
-//   p_Motor1->settings.DIR_PORT = DIR1_GPIO_Port;
-//   p_Motor1->settings.DIR_PIN = DIR1_Pin;
-//   p_Motor1->settings.PUL_PORT = PUL1_GPIO_Port;
-//   p_Motor1->settings.PUL_PIN = PUL1_Pin;
-// }
-
-// /*
-//  * Reset the stepper motor to 0 and stop
-//  */
-// void StepperReset(StepperMotor *mot)
-// {
-//   /* Enable both stepper motors */
-//   mot->status.enabled = 0;
-//   mot->status.enabled = 0;
-//   mot->status.current_position = HOME_POS;
-//   mot->status.desired_position = HOME_POS;
-//   mot->status.speed = 0;
-//   mot->status.spinning = 0;
-//   /* Re-enable the motor */
-//   mot->status.enabled = 1;
-//   mot->status.enabled = 1;
-
-//   /* Set to default speed */
-//   mot->status.speed = 10;
-// }
+  //OCR1A = mind;
+}
 
 /**
  * @brief Generate S-curve for stepper motor speed:
- *
- * When FStart < FStop, curve goes up;
- * When FStart > FStop, curve goes down;
- * When FStart = FStop, curve is flat horizontal line
- *
+ * FStart < FStop, curve goes up;
+ * FStart > FStop, curve goes down;
+ * FStart = FStop, curve is flat horizontal line
  * @param len number of samples
  * @param FStart
  * @param FStop

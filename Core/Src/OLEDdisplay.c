@@ -16,14 +16,8 @@
  */
 
 /* Includes ---------------------------------------------------------------- */
-#include "OLEDdisplay.h"
-
 #include "main.h"
-#include "string.h"
-#include "stdio.h"
-#include <stdlib.h>
 #include "ssd1306.h"
-#include "usb_serial.h"
 
 OLED_HandleTypeDef OLED;
 
