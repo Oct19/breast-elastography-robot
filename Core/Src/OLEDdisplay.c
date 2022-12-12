@@ -57,12 +57,7 @@ void OLED_display_off(void)
  */
 void OLED_get_priority(void)
 {
-    OLED.Positions = "Z: 0.2mm A:120";
-
-    if (OLED.Rx)
-    {
-        OLED.Positions = "123";
-    }
+    // OLED.Positions = "Z: 0.2mm A:120";
 
     if (OLED.Warning != NULL)
     {
@@ -148,7 +143,7 @@ void OLED_display_message(void)
         // Second row: Positions
         ssd1306_SetCursor(0, 20);
         ssd1306_WriteString(OLED.Positions, Font_7x10, White);
-        OLED.Positions = NULL;
+        memset(OLED.Positions, 0, sizeof(OLED.Positions));
         break;
     }
     ssd1306_UpdateScreen();

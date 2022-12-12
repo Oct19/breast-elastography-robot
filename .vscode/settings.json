@@ -11,6 +11,9 @@
         "freertos.h": "c",
         "task.h": "c",
         "usb_device.h": "c",
-        "usbd_def.h": "c"
+        "usbd_def.h": "c",
+        "uartringbufdma.h": "c",
+        "string.h": "c",
+        "stdbool.h": "c"
     }
 }

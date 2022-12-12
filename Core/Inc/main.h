@@ -36,13 +36,19 @@ extern "C" {
 #include "stdlib.h"
 #include "stdbool.h"
 #include "stdint.h"
+#include "printf.h"
 #include "nuts_bolts.h"
 
 #include "gpio.h"
+#include "dma.h"
+#include "adc.h"
+#include "usart.h"
+#include "uartRingBufDMA.h"
 #include "usbd_conf.h"
 #include "stepper.h"
 #include "usb_serial.h"
 #include "OLEDdisplay.h"
+#include "force_sensor.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -91,15 +97,19 @@ void Error_Handler(void);
 #define DIR1_GPIO_Port GPIOB
 #define PUL1_Pin GPIO_PIN_14
 #define PUL1_GPIO_Port GPIOB
-#define DIR2_Pin GPIO_PIN_9
-#define DIR2_GPIO_Port GPIOA
-#define PUL2_Pin GPIO_PIN_10
+#define DIR2_Pin GPIO_PIN_15
+#define DIR2_GPIO_Port GPIOB
+#define PUL2_Pin GPIO_PIN_8
 #define PUL2_GPIO_Port GPIOA
 #define Z_RESET_Pin GPIO_PIN_3
 #define Z_RESET_GPIO_Port GPIOB
 #define Z_RESET_EXTI_IRQn EXTI3_IRQn
 #define A_RESET_Pin GPIO_PIN_4
 #define A_RESET_GPIO_Port GPIOB
+#define TEST_OUT_Pin GPIO_PIN_8
+#define TEST_OUT_GPIO_Port GPIOB
+#define TX_EN_Pin GPIO_PIN_9
+#define TX_EN_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 #define pi 3.1415926

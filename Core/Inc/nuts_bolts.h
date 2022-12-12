@@ -80,5 +80,6 @@ float hypot_f(float x, float y);
 
 float convert_delta_vector_to_unit_vector(float *vector);
 float limit_value_by_axis_maximum(float *max_value, float *unit_vec);
+uint16_t ModRTU_CRC(uint8_t* buf, int len);
 
 #endif

@@ -45,7 +45,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
 /* USER CODE END Variables */
 /* Definitions for blink */
 osThreadId_t blinkHandle;
@@ -159,10 +158,16 @@ void StartBlink(void *argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartBlink */
+  uint32_t adc_val;
   /* Infinite loop */
   for (;;)
   {
     // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    HAL_ADC_Start(&hadc1);
+    HAL_ADC_PollForConversion(&hadc1, 100); // wait for the conversion to complete
+    adc_val = HAL_ADC_GetValue(&hadc1);
+    sprintf(OLED.Positions, "%lu", adc_val);
+    HAL_ADC_Stop(&hadc1);
     osDelay(50);
   }
   /* USER CODE END StartBlink */
@@ -206,7 +211,7 @@ void StartUSBserial(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    USB_Transmit_Hello();
+    // USB_Transmit_Hello();
     osDelay(500);
   }
   /* USER CODE END StartUSBserial */

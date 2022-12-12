@@ -35,7 +35,7 @@ typedef struct _OLED_HandleTypeDef{
     uint8_t    Tx[64];                // priority 1
     uint8_t    Rx[64];                // priority 1
     
-    char    *Positions;         // priority 0
+    char    Positions[20];         // priority 0
     int     priority_old;
     int     priority;
 } OLED_HandleTypeDef;
