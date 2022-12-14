@@ -41,9 +41,10 @@ extern "C" {
 
 #include "gpio.h"
 #include "dma.h"
+#ifdef _forceSensor_USE_ADC
 #include "adc.h"
+#endif // _forceSensor_USE_ADC
 #include "usart.h"
-#include "uartRingBufDMA.h"
 #include "usbd_conf.h"
 #include "stepper.h"
 #include "usb_serial.h"

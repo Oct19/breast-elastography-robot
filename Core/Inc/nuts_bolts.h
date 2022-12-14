@@ -47,6 +47,8 @@
 #define INCH_PER_MM (0.0393701f)
 #define TICKS_PER_MICROSECOND (F_CPU/1000000)
 
+// math constant
+#define pi 3.1415926
 
 // Useful macros
 #define clear_vector(a) memset(a, 0, sizeof(a))
@@ -62,6 +64,18 @@
 #define bit_false(x,mask) (x) &= ~(mask)
 #define bit_istrue(x,mask) ((x & mask) != 0)
 #define bit_isfalse(x,mask) ((x & mask) == 0)
+
+// Bit operations
+#define bit_set(reg, bit) ((reg) |=  (1 << (bit)))
+#define bit_clr(reg, bit) ((reg) &= ~(1 << (bit)))
+#define bit_tgl(reg, bit) ((reg) ^=  (1 << (bit)))
+#define bit_get(reg, bit) ((reg) & (1 << (bit)))
+#define bit_put(reg, bit, val) ((reg) = (reg) & ~(1 << (bit)) | ((val) << (bit)))
+inline uint16_t htons(const uint16_t v) {
+	return v << 8 | v >> 8;
+}
+
+#define ARRAY_LEN(x)            (sizeof(x) / sizeof((x)[0]))
 
 // Read a floating point value from a string. Line points to the input buffer, char_counter
 // is the indexer pointing to the current character of the line, while float_ptr is

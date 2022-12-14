@@ -12,6 +12,15 @@
 
 #include "main.h"
 
+void Stepper(void *argument)
+{
+  /* Infinite loop */
+  for (;;)
+  {
+    // step_simplest();
+    osDelay(1);
+  }
+}
 /****************************************************************
  * Functions below are simple, using osDelay
  ****************************************************************
@@ -23,7 +32,7 @@
 void step_simplest(void)
 {
   ENABLE_MOTORS;
-  HAL_GPIO_TogglePin( PUL1_GPIO_Port,  PUL1_Pin);
+  HAL_GPIO_TogglePin(PUL1_GPIO_Port, PUL1_Pin);
   osDelay(1);
 }
 
@@ -40,9 +49,9 @@ void step_constantSpeed(int steps, uint8_t direction, uint8_t delay)
   HAL_GPIO_WritePin(DIR1_GPIO_Port, DIR1_Pin, direction);
   for (int i = 0; i < steps; i++)
   {
-    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, SET);
+    HAL_GPIO_WritePin(PUL1_GPIO_Port, PUL1_Pin, SET);
     osDelay(delay);
-    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, RESET);
+    HAL_GPIO_WritePin(PUL1_GPIO_Port, PUL1_Pin, RESET);
     osDelay(delay);
   }
   osDelay(1000);
@@ -70,9 +79,9 @@ void step_simpleAccel(int steps)
   ENABLE_MOTORS;
   for (int i = 0; i < steps; i++)
   {
-    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, SET);
+    HAL_GPIO_WritePin(PUL1_GPIO_Port, PUL1_Pin, SET);
     osDelay(delay);
-    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, RESET);
+    HAL_GPIO_WritePin(PUL1_GPIO_Port, PUL1_Pin, RESET);
     osDelay(delay);
 
     if (i < rampUpStop)
@@ -125,17 +134,17 @@ void step_constantAccel()
   /* Acceleration */
   for (int i = 0; i < steps; i++)
   {
-    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, RESET);
+    HAL_GPIO_WritePin(PUL1_GPIO_Port, PUL1_Pin, RESET);
     osDelay(delays[i]);
-    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, SET);
+    HAL_GPIO_WritePin(PUL1_GPIO_Port, PUL1_Pin, SET);
     osDelay(delays[i]);
   }
   /* Deceleration */
   for (int i = 0; i < steps; i++)
   {
-    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, RESET);
+    HAL_GPIO_WritePin(PUL1_GPIO_Port, PUL1_Pin, RESET);
     osDelay(delays[steps - i - 1]);
-    HAL_GPIO_WritePin( PUL1_GPIO_Port,  PUL1_Pin, SET);
+    HAL_GPIO_WritePin(PUL1_GPIO_Port, PUL1_Pin, SET);
     osDelay(delays[steps - i - 1]);
   }
   osDelay(1000);
@@ -189,40 +198,45 @@ void resetStepper(volatile stepperInfo si)
   si.movementDone = false;
 }
 
-void prepareMovement(int whichMotor, int steps) {
+void prepareMovement(int whichMotor, int steps)
+{
   volatile stepperInfo si = steppers[whichMotor];
-  si.dirFunc( steps < 0 ? 1 : 0 );
+  si.dirFunc(steps < 0 ? 1 : 0);
   si.dir = steps > 0 ? 1 : -1;
   si.totalSteps = abs(steps);
   resetStepper(si);
   remainingSteppersFlag |= (1 << whichMotor);
 }
 
-void setNextInterruptInterval() 
+void setNextInterruptInterval()
 {
   bool movementComplete = true;
 
   unsigned int mind = 999999;
-  for (int i = 0; i < NUM_STEPPERS; i++) {
-    if ( ((1 << i) & remainingSteppersFlag) && steppers[i].di < mind ) {
+  for (int i = 0; i < NUM_STEPPERS; i++)
+  {
+    if (((1 << i) & remainingSteppersFlag) && steppers[i].di < mind)
+    {
       mind = steppers[i].di;
     }
   }
 
   nextStepperFlag = 0;
-  for (int i = 0; i < NUM_STEPPERS; i++) {
-    if ( ! steppers[i].movementDone )
+  for (int i = 0; i < NUM_STEPPERS; i++)
+  {
+    if (!steppers[i].movementDone)
       movementComplete = false;
 
-    if ( ((1 << i) & remainingSteppersFlag) && steppers[i].di == mind )
+    if (((1 << i) & remainingSteppersFlag) && steppers[i].di == mind)
       nextStepperFlag |= (1 << i);
   }
 
-  if ( remainingSteppersFlag == 0 ) {
-    //OCR1A = 65500;
+  if (remainingSteppersFlag == 0)
+  {
+    // OCR1A = 65500;
   }
 
-  //OCR1A = mind;
+  // OCR1A = mind;
 }
 
 /**

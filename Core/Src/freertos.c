@@ -67,12 +67,19 @@ const osThreadAttr_t USBserial_attributes = {
   .stack_size = 220 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for Stepper */
-osThreadId_t StepperHandle;
-const osThreadAttr_t Stepper_attributes = {
-  .name = "Stepper",
+/* Definitions for StepperTask */
+osThreadId_t StepperTaskHandle;
+const osThreadAttr_t StepperTask_attributes = {
+  .name = "StepperTask",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for uartParserTask */
+osThreadId_t uartParserTaskHandle;
+const osThreadAttr_t uartParserTask_attributes = {
+  .name = "uartParserTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for onceTimer */
 osTimerId_t onceTimerHandle;
@@ -88,7 +95,8 @@ const osTimerAttr_t onceTimer_attributes = {
 void StartBlink(void *argument);
 void StartDisplay(void *argument);
 void StartUSBserial(void *argument);
-void StartStepper(void *argument);
+void Stepper(void *argument);
+void UARTParser(void *argument);
 void Callback01(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
@@ -133,8 +141,11 @@ void MX_FREERTOS_Init(void) {
   /* creation of USBserial */
   USBserialHandle = osThreadNew(StartUSBserial, NULL, &USBserial_attributes);
 
-  /* creation of Stepper */
-  StepperHandle = osThreadNew(StartStepper, NULL, &Stepper_attributes);
+  /* creation of StepperTask */
+  StepperTaskHandle = osThreadNew(Stepper, NULL, &StepperTask_attributes);
+
+  /* creation of uartParserTask */
+  uartParserTaskHandle = osThreadNew(UARTParser, NULL, &uartParserTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -158,16 +169,11 @@ void StartBlink(void *argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartBlink */
-  uint32_t adc_val;
+
   /* Infinite loop */
   for (;;)
   {
     // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    HAL_ADC_Start(&hadc1);
-    HAL_ADC_PollForConversion(&hadc1, 100); // wait for the conversion to complete
-    adc_val = HAL_ADC_GetValue(&hadc1);
-    sprintf(OLED.Positions, "%lu", adc_val);
-    HAL_ADC_Stop(&hadc1);
     osDelay(50);
   }
   /* USER CODE END StartBlink */
@@ -217,27 +223,40 @@ void StartUSBserial(void *argument)
   /* USER CODE END StartUSBserial */
 }
 
-/* USER CODE BEGIN Header_StartStepper */
+/* USER CODE BEGIN Header_Stepper */
 /**
- * @brief Function implementing the Stepper thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartStepper */
-void StartStepper(void *argument)
+* @brief Function implementing the StepperTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Stepper */
+__weak void Stepper(void *argument)
 {
-  /* USER CODE BEGIN StartStepper */
-  HAL_GPIO_WritePin(ENA_GPIO_Port, ENA_Pin, SET);
+  /* USER CODE BEGIN Stepper */
   /* Infinite loop */
-  for (;;)
+  for(;;)
   {
-    // step_simplest();
-    // step_constantSpeed(200, 1, 1);
-    step_simpleAccel(1000);
-    // step_constantAccel();
-
+    osDelay(1);
   }
-  /* USER CODE END StartStepper */
+  /* USER CODE END Stepper */
+}
+
+/* USER CODE BEGIN Header_UARTParser */
+/**
+* @brief Function implementing the uartParserTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_UARTParser */
+__weak void UARTParser(void *argument)
+{
+  /* USER CODE BEGIN UARTParser */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END UARTParser */
 }
 
 /* Callback01 function */

@@ -48,29 +48,29 @@ extern "C"
 #endif
 
 /* Multi-channel transmitter RS485 is not responding */
-// #define _FS_USE_RS485
+#define _forceSensor_USE_RS485
 /* Use STM32 on board ADC instead */
-#define _FS_USE_ADC
+// #define _forceSensor_USE_ADC
 
-#ifdef _FS_USE_ADC
-
-
+#ifdef _forceSensor_USE_ADC
 
 
-#endif /* _FS_USE_ADC */
 
 
-#ifdef _FS_USE_RS485
+#endif /* _forceSensor_USE_ADC */
+
+
+#ifdef _forceSensor_USE_RS485
 
 #define FSRxBuf_SIZE 10   // where DMA copy the data
 #define FSMainBuf_SIZE 20 // where data will be finally stored
 
 /* Choose 1 force sensor readings data type */
-// #define _FS_VALUE_FLOAT
-#define _FS_VALUE_LONG
+// #define _forceSensor_VALUE_FLOAT
+#define _forceSensor_VALUE_LONG
 
 uint8_t FS_Tx_Buf[8];
-#endif /* _FS_USE_RS485 */
+#endif /* _forceSensor_USE_RS485 */
 
 
 

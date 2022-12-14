@@ -16,7 +16,7 @@ Hardware:
 
 - System block diagram
 - Implement stepper code from iforce2d
-- Serial Tx is currently not interrupt but a task
+- Do we need USB com port?
 - Update USB related to template repo
 - Update OLED_HandleTypeDef
 - OLED: Tx Rx last for how long? If one of them keep updating, the other one should also stay
@@ -42,15 +42,17 @@ Hardware:
   char textToWrite[10];
   sprintf(textToWrite,"%" PRIu32, value);
   ```
-- Linux RS485 to USB device cannot connect [https://unix.stackexchange.com/questions/670636/unable-to-use-usb-dongle-based-on-usb-serial-converter-chip](https://unix.stackexchange.com/questions/670636/unable-to-use-usb-dongle-based-on-usb-serial-converter-chip)
+
+- [Linux RS485 to USB device cannot connect]([https://unix.stackexchange.com/questions/670636/unable-to-use-usb-dongle-based-on-usb-serial-converter-chip](https://unix.stackexchange.com/questions/670636/unable-to-use-usb-dongle-based-on-usb-serial-converter-chip))
 
 ## References
 
-- STM32 project template [https://github.com/Oct19/Bluepill-CubeMX-PlatformIO-Template](https://github.com/Oct19/Bluepill-CubeMX-PlatformIO-Template)
-- STM32 Driver for OLED Display SSD1306 [https://github.com/afiskon/stm32-ssd1306](https://github.com/afiskon/stm32-ssd1306)
-- STM32 timer interrupt [https://controllerstech.com/pwm-in-stm32/](https://controllerstech.com/pwm-in-stm32/)
-- Coordinated stepper motor control (arduino) [https://youtu.be/fHAO7SW-SZI](https://youtu.be/fHAO7SW-SZI)
-- STM32 timer [https://youtu.be/VfbW6nfG4kw](https://youtu.be/VfbW6nfG4kw)
-- Stepper motor configuration [https://github.com/brentnd/PiPlot](https://github.com/brentnd/PiPlot)
-- GRBL stm32 [https://github.com/dungjk/grbl-stm32](https://github.com/dungjk/grbl-stm32)
-- Stepper S-Curve [https://github.com/MGDG/SLineControl](https://github.com/MGDG/SLineControl)
+- [STM32 project template](https://github.com/Oct19/Bluepill-CubeMX-PlatformIO-Template)
+- [STM32 Driver for OLED Display SSD1306]([https://github.com/afiskon/stm32-ssd1306](https://github.com/afiskon/stm32-ssd1306))
+- [STM32 timer interrupt]([https://controllerstech.com/pwm-in-stm32/](https://controllerstech.com/pwm-in-stm32/))
+- [Coordinated stepper motor control (arduino)]([https://youtu.be/fHAO7SW-SZI](https://youtu.be/fHAO7SW-SZI))
+- [STM32 timer]([https://youtu.be/VfbW6nfG4kw](https://youtu.be/VfbW6nfG4kw))
+- [Stepper motor configuration]([https://github.com/brentnd/PiPlot](https://github.com/brentnd/PiPlot))
+- [GRBL stm32]([https://github.com/dungjk/grbl-stm32](https://github.com/dungjk/grbl-stm32))
+- [Stepper S-Curve]([https://github.com/MGDG/SLineControl](https://github.com/MGDG/SLineControl))
+- [UART with DMA and FreeRTOS](https://www.devcoons.com/stm32-uart-receive-unknown-size-data-using-dma-and-freertos/)
