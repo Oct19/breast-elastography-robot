@@ -31,44 +31,12 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "math.h"
-#include "string.h"
-#include "stdlib.h"
-#include "stdbool.h"
-#include "stdint.h"
-#include "printf.h"
-#include "nuts_bolts.h"
-
-#include "gpio.h"
-#include "dma.h"
-#ifdef _forceSensor_USE_ADC
-#include "adc.h"
-#endif // _forceSensor_USE_ADC
-#include "usart.h"
-#include "usbd_conf.h"
-#include "stepper.h"
-#include "usb_serial.h"
-#include "OLEDdisplay.h"
-#include "force_sensor.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "cmsis_os.h"
+#include "robot.h"
 
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
-  typedef enum _ROBOT_STATE_HandleTypeDef
-  {
-    STATE_RESET, // 0 ignore Rx, homing procedure
-    STATE_IDLE,  // 1 stepper off
-    STATE_MOVE,  // 2 stepper destination != current position
-    STATE_ERROR, // 3 cant homing,
-  } ROBOT_STATE_HandleTypeDef;
-
-  extern ROBOT_STATE_HandleTypeDef ROBOT_STATE;
 
 /* USER CODE END ET */
 
@@ -92,25 +60,24 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LED_Pin GPIO_PIN_13
 #define LED_GPIO_Port GPIOC
-#define ENA_Pin GPIO_PIN_12
-#define ENA_GPIO_Port GPIOB
-#define DIR1_Pin GPIO_PIN_13
+#define SWITCH_POS_Pin GPIO_PIN_1
+#define SWITCH_POS_GPIO_Port GPIOA
+#define SWITCH_NEG_Pin GPIO_PIN_2
+#define SWITCH_NEG_GPIO_Port GPIOA
+#define BUZZER_Pin GPIO_PIN_6
+#define BUZZER_GPIO_Port GPIOA
+#define ENA1_Pin GPIO_PIN_14
+#define ENA1_GPIO_Port GPIOB
+#define DIR1_Pin GPIO_PIN_15
 #define DIR1_GPIO_Port GPIOB
-#define PUL1_Pin GPIO_PIN_14
-#define PUL1_GPIO_Port GPIOB
-#define DIR2_Pin GPIO_PIN_15
-#define DIR2_GPIO_Port GPIOB
-#define PUL2_Pin GPIO_PIN_8
+#define PUL1_Pin GPIO_PIN_8
+#define PUL1_GPIO_Port GPIOA
+#define PUL2_Pin GPIO_PIN_9
 #define PUL2_GPIO_Port GPIOA
-#define Z_RESET_Pin GPIO_PIN_3
-#define Z_RESET_GPIO_Port GPIOB
-#define Z_RESET_EXTI_IRQn EXTI3_IRQn
-#define A_RESET_Pin GPIO_PIN_4
-#define A_RESET_GPIO_Port GPIOB
-#define TEST_OUT_Pin GPIO_PIN_8
-#define TEST_OUT_GPIO_Port GPIOB
-#define TX_EN_Pin GPIO_PIN_9
-#define TX_EN_GPIO_Port GPIOB
+#define DIR2_Pin GPIO_PIN_10
+#define DIR2_GPIO_Port GPIOA
+#define ENA2_Pin GPIO_PIN_11
+#define ENA2_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 #define pi 3.1415926

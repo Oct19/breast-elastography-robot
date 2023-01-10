@@ -31,51 +31,25 @@ extern "C"
 {
 #endif
 
-#include "main.h"
+#include "robot.h"
 #include "stdbool.h"
 
-#define ENABLE_MOTORS       HAL_GPIO_WritePin(ENA_GPIO_Port, ENA_Pin, SET);
-#define DISABLE_MOTORS      HAL_GPIO_WritePin(ENA_GPIO_Port, ENA_Pin, RESET);
 
+#define SWITCH_POS (HAL_GPIO_ReadPin(SWITCH_POS_GPIO_Port,SWITCH_POS_Pin))
+#define SWITCH_NEG (HAL_GPIO_ReadPin(SWITCH_NEG_GPIO_Port, SWITCH_NEG_Pin))
 
-typedef struct
-{
-    // externally defined parameters
-    float acceleration;
-    volatile unsigned int minStepInterval; // ie. max speed, smaller is faster
-    void (*dirFunc)(int);
-    void (*stepFunc)();
+#define MOT_OFF HAL_GPIO_WritePin(ENA1_GPIO_Port, ENA1_Pin, RESET)
+#define MOT_ON HAL_GPIO_WritePin(ENA1_GPIO_Port, ENA1_Pin, SET)
 
-    // derived parameters
-    unsigned int c0;   // step interval for first step, determines acceleration
-    long stepPosition; // current position of stepper (total of all movements taken so far)
+#define DIR_CW HAL_GPIO_WritePin(DIR1_GPIO_Port, DIR1_Pin, SET)
+#define DIR_CCW HAL_GPIO_WritePin(DIR1_GPIO_Port, DIR1_Pin, RESET)
 
-    // per movement variables (only changed once per movement)
-    volatile int dir;                      // current direction of movement, used to keep track of position
-    volatile unsigned int totalSteps;      // number of steps requested for current movement
-    volatile bool movementDone;            // true if the current movement has been completed (used by main program to wait for completion)
-    volatile unsigned int rampUpStepCount; // number of steps taken to reach either max speed, or half-way to the goal (will be zero until this number is known)
-
-    // per iteration variables (potentially changed every interrupt)
-    volatile unsigned int n;         // index in acceleration curve, used to calculate next interval
-    volatile float d;                // current interval length
-    volatile unsigned long di;       // above variable truncated
-    volatile unsigned int stepCount; // number of steps completed in current movement
-} stepperInfo;
-
-#define NUM_STEPPERS 2
-extern volatile stepperInfo steppers[NUM_STEPPERS];
-extern volatile uint8_t remainingSteppersFlag;
-extern volatile uint8_t nextStepperFlag;
+void Stepper_Init(void);
 
 void step_simplest(void);
 void step_constantSpeed(int steps, uint8_t direction, uint8_t delay);
 void step_simpleAccel(int steps);
 void step_constantAccel();
-
-void resetStepperInfo(stepperInfo si);
-void resetStepper(volatile stepperInfo si);
-void step_ISR();
 
 #ifdef __cplusplus
 }
