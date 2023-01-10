@@ -4,30 +4,27 @@ Hardware:
 
 - STM32F103C8T6 board (Bluepill)
 - ST-Link V2
-- OLED Display SSD1306, width 128, height 32
+- Stepper Motor Driver UM242 (TB6600 family)
+- Stepper Motor from UMot
 
 ## Bug
 
-- If migrate private include from FreeRTOS.c to main.h, USBD_CDC_ItfTypeDef is not defined
-- When message too long, OLED stuck
-- USART idle line detection is not working, HAL_UARTEx_RxEventCallback is not called, switched to ring buffer instead
+No known bugs
 
-## TODO
+## CONNECTION
 
-- System block diagram
-- Implement stepper code from iforce2d
-- Do we need USB com port?
-- Update USB related to template repo
-- Update OLED_HandleTypeDef
-- OLED: Tx Rx last for how long? If one of them keep updating, the other one should also stay
-- For task display: in each loop, if limit switch interrupt happened after get_priority, the immediate display function erased notification message before passing on to the next loop. Tmeporay fix: clear message buffer at coorsponding switch case insead of clear all buffer at the end of the function. Same priority level messages still can miss
+STEP DRIVER 1 controls 4 platform raising motors, 2 of those connect in reverse (switch RED with BLACK, BLUE with GREEN)
 
-## Future features
-
-- [ ] G code
-- [ ] RoboDK
-- [ ] Realtime stepper control
-- [ ] USB data transmission
+* STM PB14 (ENA) - STEP DRIVER 1 ENA-
+* STM PB15 (DIR1) - STEP DRIVER 1 DIR-
+* STM PA8 (PUL1) - STEP DRIVER 1 PUL-
+* STEP DRIVER ENA+ - 5V
+* STEP DRIVER DIR+ - 5V
+* STEP DRIVER PUL+ - 5V
+* STEP DRIVER A+ - MOTOR RED
+* STEP DRIVER A- - MOTOR BLUE
+* STEP DRIVER B+ - MOTOR BLACK
+* STEP DRIVER B- - MOTOR GREEN
 
 ## Fixed Issue
 
@@ -42,13 +39,11 @@ Hardware:
   char textToWrite[10];
   sprintf(textToWrite,"%" PRIu32, value);
   ```
-
 - [Linux RS485 to USB device cannot connect]([https://unix.stackexchange.com/questions/670636/unable-to-use-usb-dongle-based-on-usb-serial-converter-chip](https://unix.stackexchange.com/questions/670636/unable-to-use-usb-dongle-based-on-usb-serial-converter-chip))
 
 ## References
 
 - [STM32 project template](https://github.com/Oct19/Bluepill-CubeMX-PlatformIO-Template)
-- [STM32 Driver for OLED Display SSD1306]([https://github.com/afiskon/stm32-ssd1306](https://github.com/afiskon/stm32-ssd1306))
 - [STM32 timer interrupt]([https://controllerstech.com/pwm-in-stm32/](https://controllerstech.com/pwm-in-stm32/))
 - [Coordinated stepper motor control (arduino)]([https://youtu.be/fHAO7SW-SZI](https://youtu.be/fHAO7SW-SZI))
 - [STM32 timer]([https://youtu.be/VfbW6nfG4kw](https://youtu.be/VfbW6nfG4kw))
