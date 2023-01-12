@@ -5,9 +5,7 @@ Hardware:
 - STM32F103C8T6 board (Bluepill)
 - ST-Link V2
 - Stepper Motor Driver UM242 (TB6600 family)
-- Stepper Motor from UMot
-
-## Bug
+- Stepper Motor from UMotBug
 
 No known bugs
 

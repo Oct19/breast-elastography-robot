@@ -41,6 +41,9 @@ extern "C"
 #define MOT_OFF HAL_GPIO_WritePin(ENA1_GPIO_Port, ENA1_Pin, RESET)
 #define MOT_ON HAL_GPIO_WritePin(ENA1_GPIO_Port, ENA1_Pin, SET)
 
+#define PWM_START HAL_TIM_PWM_Start_IT(&htim1, TIM_CHANNEL_1)
+#define PWM_STOP HAL_TIM_PWM_Stop_IT(&htim1, TIM_CHANNEL_1)
+
 #define DIR_CW HAL_GPIO_WritePin(DIR1_GPIO_Port, DIR1_Pin, SET)
 #define DIR_CCW HAL_GPIO_WritePin(DIR1_GPIO_Port, DIR1_Pin, RESET)
 

@@ -105,15 +105,18 @@ int main(void)
     {
       DIR_CW;
       MOT_ON;
+      PWM_START;
     }
     else if (SWITCH_NEG)
     {
       DIR_CCW;
       MOT_ON;
+      PWM_START;
     }
     else
     {
       MOT_OFF;
+      PWM_STOP;
     }
   }
   /* USER CODE END 3 */
