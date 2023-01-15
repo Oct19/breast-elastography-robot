@@ -7,7 +7,9 @@ Hardware:
 - Stepper Motor Driver UM242 (TB6600 family)
 - Stepper Motor from UMotBug
 
-No known bugs
+## Know Issues
+
+Unable to compile in some Windows environment
 
 ## CONNECTION
 
